@@ -10,19 +10,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.koola.mvflow.flow.DefaultContentSuccess
-import com.koola.mvflow.flow.DefaultFlow
-import com.koola.mvflow.flow.Interaction
 import com.koola.mvflow.flow.SecondaryContentSuccess
-import com.koola.mvflow.flow.SecondaryFlow
+import com.koola.mvflow.flow.SecondaryInteraction
 import com.koola.mvflow.flow.State
+import com.koola.mvflow.flow.impl.DefaultFlow
+import com.koola.mvflow.flow.impl.DefaultRepository
+import com.koola.mvflow.flow.impl.SecondaryFlow
 import com.koola.mvflow.ui.theme.MVFlowTheme
 
+private val viewModel = MainViewModel(SecondaryFlow(), DefaultRepository("ERROR"))
+
 class MainActivity : ComponentActivity() {
-    private val viewModel = MainViewModel(SecondaryFlow())
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -31,16 +34,19 @@ class MainActivity : ComponentActivity() {
             MVFlowTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val state = viewModel.state.collectAsState().value
-
+                    LaunchedEffect("Teste") {
+                        viewModel.onLoadData()
+                    }
                     Greeting(
                         name = (state as? State.Content<SecondaryContentSuccess>)?.content?.nameUser
                             ?: "Teste",
                         modifier = Modifier
                             .padding(innerPadding)
                             .clickable {
-                                viewModel.onHandleUser(Interaction.EventClick("SEE_USER"))
+                                viewModel.onHandleUser(SecondaryInteraction.SeeResults)
                             }
                     )
+
                 }
             }
         }
