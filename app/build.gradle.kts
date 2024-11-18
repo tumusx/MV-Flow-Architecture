@@ -1,8 +1,12 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
+val localProperties =
+    Properties().apply { load(rootProject.file("local.properties").inputStream()) }
 
 android {
     namespace = "com.koola.mvflow"
@@ -22,11 +26,18 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
+        debug {
+            val myCustom: String = localProperties.getProperty("nome")
+            buildConfigField("String", "MY_CUSTOM", "\"$myCustom")
+
+        }
     }
+    buildFeatures{
+        buildConfig = true
+}
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
