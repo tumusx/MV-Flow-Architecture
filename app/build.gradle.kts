@@ -31,7 +31,7 @@ android {
         }
         debug {
             val myCustom: String = localProperties.getProperty("nome")
-            buildConfigField("String", "MY_CUSTOM", "\"$myCustom")
+            buildConfigField("String", "MY_CUSTOM", "\"$myCustom\"")
 
         }
     }
